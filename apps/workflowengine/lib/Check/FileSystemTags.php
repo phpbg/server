@@ -22,6 +22,7 @@
 namespace OCA\WorkflowEngine\Check;
 
 
+use OC\Files\Storage\Wrapper\Jail;
 use OCP\Files\Cache\ICache;
 use OCP\Files\IHomeStorage;
 use OCP\Files\Storage\IStorage;
@@ -71,6 +72,11 @@ class FileSystemTags implements ICheck {
 	 */
 	public function setFileInfo(IStorage $storage, $path) {
 		$this->storage = $storage;
+
+		if ($storage->instanceOfStorage(Jail::class)) {
+			$path = $storage->getJailedPath($path);
+		}
+
 		$this->path = $path;
 	}
 

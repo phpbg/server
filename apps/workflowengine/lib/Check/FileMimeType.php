@@ -22,6 +22,7 @@
 namespace OCA\WorkflowEngine\Check;
 
 
+use OC\Files\Storage\Wrapper\Jail;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\Storage\IStorage;
 use OCP\IL10N;
@@ -61,6 +62,11 @@ class FileMimeType extends AbstractStringCheck {
 	 */
 	public function setFileInfo(IStorage $storage, $path) {
 		$this->storage = $storage;
+
+		if ($storage->instanceOfStorage(Jail::class)) {
+			$path = $storage->getJailedPath($path);
+		}
+
 		$this->path = $path;
 		if (!isset($this->mimeType[$this->storage->getId()][$this->path])
 			|| $this->mimeType[$this->storage->getId()][$this->path] === '') {
